@@ -48,7 +48,7 @@ void updateLeds() {
       }
     break;
     case SUM:
-      int notesPerLed = 88 / NUM_LEDS;
+      int notesPerLed = ceil(88.0 / NUM_LEDS);
       for(int i = 0; i < NUM_LEDS; i++) {
         int j = 0;
         int ledSum = 0;
