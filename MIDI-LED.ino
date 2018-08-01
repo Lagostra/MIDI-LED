@@ -43,7 +43,7 @@ void updateLeds() {
         if(midiNotes[i + start] == 0) {
           leds[i] = NULL;
         } else {
-          leds[i] = CRGB::White;  
+          leds[i] = midiNotes[i];  
         }
       }
     break;
@@ -59,7 +59,7 @@ void updateLeds() {
         if(ledSum == 0) {
           leds[i] = NULL;  
         } else {
-          leds[i] = CRGB::White;  
+          leds[i] = getColor(ledSum);  
         }
       }
     break;
@@ -83,4 +83,12 @@ void checkMIDI(){
             break;
     }
   } while(MIDI.read());
+}
+
+CHSV getColor(int velocity) {
+  if(velocity > 127) velocity = 127;
+  float weight = velocity / 127.0;
+  int hue;
+  hue = int((1-weight) * 160 + weight * 64);
+  return CHSV(hue, 255, 255);
 }
