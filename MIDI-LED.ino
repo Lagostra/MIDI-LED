@@ -12,7 +12,7 @@
 #define FLOOR_SUM 2
 
 
-int mode = OFFSET;
+int mode = FLOOR_SUM;
 
 
 CRGB leds[NUM_LEDS];
@@ -45,6 +45,10 @@ void updateLeds() {
       break;
     case SUM:
       notesPerLed = ceil(88.0 / NUM_LEDS);
+      break;
+    case FLOOR_SUM:
+      notesPerLed = floor(88.0 / NUM_LEDS);
+      offset = 60 - floor((NUM_LEDS * notesPerLed) / 2) - 21;
       break;
   }
 
