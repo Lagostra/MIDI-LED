@@ -7,11 +7,12 @@
 #define LED_TYPE    WS2811
 #define COLOR_ORDER GRB
 // LED Mapping modes
-#define MID_OF_KEYBOARD 0
+#define OFFSET 0
 #define SUM 1
+#define FLOOR_SUM 2
 
 
-int mode = SUM;
+int mode = OFFSET;
 
 
 CRGB leds[NUM_LEDS];
@@ -35,34 +36,30 @@ void loop()
 }
 
 void updateLeds() {
-  switch(mode){
-    case MID_OF_KEYBOARD:
-      int start;
-      start = 60 - int(NUM_LEDS / 2);
-      for(int i = 0; i < NUM_LEDS; i++) {
-        if(midiNotes[i + start] == 0) {
-          leds[i] = NULL;
-        } else {
-          leds[i] = midiNotes[i];  
-        }
-      }
-    break;
+  int offset = 0;
+  int notesPerLed = 1;
+
+  switch(mode) {
+    case OFFSET:
+      offset = 60 - floor(NUM_LEDS / 2) - 21;
+      break;
     case SUM:
-      int notesPerLed = ceil(88.0 / NUM_LEDS);
-      for(int i = 0; i < NUM_LEDS; i++) {
-        int j = 0;
-        int ledSum = 0;
-        while(j < notesPerLed && (j + i * notesPerLed + 21) < 109) {
-          ledSum += midiNotes[j + i * notesPerLed + 21];
-          j++;
-        }
-        if(ledSum == 0) {
-          leds[i] = NULL;  
-        } else {
-          leds[i] = getColor(ledSum);  
-        }
-      }
-    break;
+      notesPerLed = ceil(88.0 / NUM_LEDS);
+      break;
+  }
+
+  for(int i = 0; i < NUM_LEDS; i++) {
+    int j = 0;
+    int ledSum = 0;
+    while(j < notesPerLed && (j + i * notesPerLed + 21) < 109) {
+      ledSum += midiNotes[j + i * notesPerLed + 21 + offset];
+      j++;
+    }
+    if(ledSum == 0) {
+      leds[i] = NULL;  
+    } else {
+      leds[i] = getColor(ledSum);  
+    }
   }
   
   FastLED.show();
